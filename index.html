@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0a08;--fg:#f1d48a;--mut:#b99a55;--line:rgba(241,212,138,.2);--accent:#f5c542;
+:root{--bg:#0d0a08;--accent:#f5c542;--fg:color-mix(in srgb,var(--accent) 38%,#fbefc9);--mut:color-mix(in srgb,var(--accent) 45%,#9a8f78);--line:color-mix(in srgb,var(--accent) 24%,transparent);
 --disp:"Syne","Arial Black",Impact,sans-serif;--body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
 color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
@@ -41,8 +41,8 @@ h1,h2,h3{font-family:var(--disp);font-weight:800;line-height:1;letter-spacing:-.
 h1{font-size:clamp(2.8rem,8.2vw,7.4rem);max-width:11ch}
 h2{font-size:clamp(2.1rem,5vw,4.2rem);max-width:14ch}
 p{max-width:52ch;color:var(--mut)}
-.hero p{font-size:1.2rem;margin:28px 0 36px;color:#e6cd8c}
-h1 .w i,h2 .w i{background:linear-gradient(100deg,#fff3c4 0%,#f5c542 28%,#b8862b 52%,#ffe29a 78%,#f5c542 100%);background-size:220% 100%;background-position:calc(var(--gp,0)*1%) 50%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.2rem;margin:28px 0 36px;color:var(--fg)}
+h1 .w i,h2 .w i{background:linear-gradient(100deg,#fff 0%,var(--accent) 28%,color-mix(in srgb,var(--accent) 60%,#000) 52%,color-mix(in srgb,var(--accent) 55%,#fff) 78%,var(--accent) 100%);background-size:220% 100%;background-position:calc(var(--gp,0)*1%) 50%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .cta{display:flex;gap:14px;flex-wrap:wrap}
 .hint{position:absolute;bottom:28px;left:clamp(20px,6vw,90px);font-size:.85rem;color:var(--mut);display:flex;gap:12px;align-items:center}
 .hint i{width:1px;height:42px;background:linear-gradient(var(--accent),transparent);animation:drip 1.8s infinite}
@@ -260,7 +260,7 @@ body.ld{overflow:hidden}
       <div class="plan big rv" style="--d:1"><h3>Boss</h3><div class="pr">$79<small> / seat / month</small></div><p style="margin:0">For managers who run several teams.</p><ul><li>Everything in Crew</li><li>Live alerts and forecasts</li><li>Approvals and audit trail</li><li>Priority support</li></ul></div>
       <div class="plan rv" style="--d:2"><h3>Empire</h3><div class="pr">Custom</div><p style="margin:0">For companies with many departments.</p><ul><li>Everything in Boss</li><li>Single sign-on</li><li>Dedicated success manager</li></ul></div>
     </div>
-    <div class="mail"><input id="nm" type="text" placeholder="Your name" aria-label="Your name" autocomplete="name"><input id="em" type="email" placeholder="you@company.com" aria-label="Work email" autocomplete="email"><select id="bt" aria-label="Type of business"><option>Retail or shop</option><option>Food and drink</option><option>Services</option><option>Online business</option><option>Other</option></select><button class="btn" id="go">Get early access</button></div>
+    <form class="mail" id="join-form" novalidate><input id="nm" name="name" type="text" maxlength="100" placeholder="Your name" aria-label="Your name" autocomplete="name"><input id="em" name="email" type="email" maxlength="254" placeholder="you@company.com" aria-label="Work email" autocomplete="email"><select id="bt" name="business" aria-label="Type of business"><option>Retail or shop</option><option>Food and drink</option><option>Services</option><option>Online business</option><option>Other</option></select><input type="text" name="company_site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"><button class="btn" id="go" type="submit">Get early access</button></form>
     <div id="msg" role="status"></div>
   </section>
 </main>
@@ -294,7 +294,13 @@ $$(".row,.step").forEach(function(el){rio.observe(el)});
 function count(el){if(el.dataset.d)return;el.dataset.d=1;var to=+el.dataset.to,dec=+el.dataset.dec||0,t0=performance.now();
  (function f(t){var k=Math.min(1,(t-t0)/1800),e=1-Math.pow(1-k,4);el.textContent=(el.dataset.pre||"")+(to*e).toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec})+(el.dataset.suf||"");if(k<1)requestAnimationFrame(f)})(t0)}
 $$(".plan").forEach(function(p){p.addEventListener("mousemove",function(e){var r=p.getBoundingClientRect();p.style.setProperty("--ry",((e.clientX-r.left)/r.width-.5)*10+"deg");p.style.setProperty("--rx",(.5-(e.clientY-r.top)/r.height)*10+"deg")});p.addEventListener("mouseleave",function(){p.style.setProperty("--rx","0deg");p.style.setProperty("--ry","0deg")})});
-$("#go").addEventListener("click",function(){var n=$("#nm").value.trim(),v=$("#em").value.trim(),m=$("#msg");if(!n){m.textContent="Enter your name so we know who to reply to.";return}if(!/^\S+@\S+\.\S+$/.test(v)){m.textContent="Enter a valid work email to get early access.";return}m.textContent="You’re on the list, "+n.split(" ")[0]+". We’ll be in touch soon."});
+$("#join-form").addEventListener("submit",function(ev){ev.preventDefault();var f=ev.target,b=$("#go"),n=$("#nm").value.trim(),v=$("#em").value.trim(),m=$("#msg");if(b.disabled)return;if(!n){m.textContent="Enter your name so we know who to reply to.";return}if(!/^\S+@\S+\.\S+$/.test(v)){m.textContent="Enter a valid work email to get early access.";return}
+ b.disabled=true;b.textContent="Sending…";m.textContent="";
+ fetch("/api/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:n,email:v,business:$("#bt").value,company_site:f.company_site.value})})
+ .then(function(r){return r.json().catch(function(){return {}}).then(function(d){if(!r.ok)throw new Error(d.error||"Something went wrong. Please try again.");return d})})
+ .then(function(){m.textContent="You’re on the list, "+n.split(" ")[0]+". We’ll be in touch soon.";f.reset()})
+ .catch(function(e){m.textContent=e instanceof TypeError?"Network error. Check your connection and try again.":e.message})
+ .then(function(){b.disabled=false;b.textContent="Get early access"})});
 
 /* heading word reveals, custom cursor ring, magnetic buttons */
 var heroEl=$(".hero");
@@ -367,7 +373,7 @@ addEventListener("resize",resize);resize();
 var mx=0,my=0,tmx=0,tmy=0;addEventListener("pointermove",function(e){tmx=e.clientX/innerWidth-.5;tmy=e.clientY/innerHeight-.5});
 function sm3(x){return x*x*(3-2*x)}
 function lerpA(a,pos,f){var i=Math.min(a.length-2,Math.floor(pos));return a[i]+(a[i+1]-a[i])*f}
-var secs=$$("main > section"),tops=[],lastH=0,mqw=1,mqx=0,lgp=-9,lhp=0,stT=0,stH=1,barEl=$("#bar"),lfEl=$("#lf");
+var secs=$$("main > section"),tops=[],lastH=0,mqw=1,mqx=0,lgp=-9,lhp=0,lAcc=0,stT=0,stH=1,barEl=$("#bar"),lfEl=$("#lf");
 function calc(){tops=secs.map(function(s){return s.getBoundingClientRect().top+scrollY});mqw=mq.children[mq.children.length/2].offsetLeft-mq.children[0].offsetLeft;var sr=$(".steps").getBoundingClientRect();stT=sr.top+scrollY;stH=sr.height}
 function secF(y){for(var i=secs.length-2;i>=0;i--){if(y>=tops[i])return i+Math.min(1,(y-tops[i])/(tops[i+1]-tops[i]))}return 0}
 var sp=0,tx=OX[0],last=0,hex="",sv=0;
@@ -375,6 +381,7 @@ function frame(ms){requestAnimationFrame(frame);var t=ms*.001,dt=Math.min(.05,t-
  var max=root.scrollHeight-innerHeight,p=max>0?scrollY/max:0,vel=p-sp,kd=1-Math.exp(-dt*5);sp+=vel*kd;sv+=(vel-sv)*(1-Math.exp(-dt*8));mx+=(tmx-mx)*kd;my+=(tmy-my)*kd;
  if(root.scrollHeight!==lastH){lastH=root.scrollHeight;calc()}var L=PAL.length,pos=Math.min(L-1.0001,secF(sp*max)),i0=Math.floor(pos),f=sm3(pos-i0);
  col.copy(PAL[i0]).lerp(PAL[i0+1],f);
+ if(ms-lAcc>90){lAcc=ms;var hx="#"+col.getHexString();if(hx!==hex){hex=hx;root.style.setProperty("--accent",hx)}}
  
  barEl.style.transform="scaleX("+sp+")";if(Math.abs(sp*160-lgp)>1.5){lgp=sp*160;hdgs.forEach(function(h){h.style.setProperty("--gp",lgp.toFixed(1))})}
  dust.material.uniforms.uT.value=t;dust.rotation.y=t*.02+sp*1.5;
